@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDb } from "./db/db.js";
 import adminRoutes from "./routes/admin.route.js";
+import projectRoutes from "./routes/project.routes.js"; 
+
 
 dotenv.config();
 
@@ -13,10 +15,11 @@ app.use(express.json());
 connectDb();
 
 app.use("/api/admin", adminRoutes);
+app.use("/api/projects", projectRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Admin Backend API");
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

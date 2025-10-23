@@ -4,7 +4,7 @@ const Navbar = ({ username, onLogout }) => {
   return (
     <nav className="w-full bg-gray-900 bg-opacity-80 backdrop-blur-md shadow-md p-4 flex justify-between items-center">
       <div className="text-2xl font-semibold text-white">
-        {username ? `Welcome ,` : "Welcome"} <span>{username}</span>
+        Magadha Enterprices
       </div>
       <button
         onClick={onLogout}
