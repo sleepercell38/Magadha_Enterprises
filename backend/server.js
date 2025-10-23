@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDb } from "./db/db.js";
 import adminRoutes from "./routes/admin.route.js";
-import projectRoutes from "./routes/project.routes.js"; 
-
+import projectRoutes from "./routes/project.routes.js";
+import projectEventRoutes from "./routes/projectEvent.routes.js";
 
 dotenv.config();
 
@@ -16,6 +16,7 @@ connectDb();
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/projects", projectEventRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Admin Backend API");
