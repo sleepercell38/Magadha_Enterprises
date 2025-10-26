@@ -124,7 +124,7 @@ const EventTimeline = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate("/project")}
+                onClick={() => navigate("/profile")}
                 className="p-2 hover:bg-gray-700 rounded-lg transition-all"
               >
                 <ArrowLeftIcon className="w-5 h-5" />

@@ -4,12 +4,17 @@ import { fetchProjects, createProject } from "../redux/Project/projectSlice";
 import Navbar from "../components/Navbar";
 import ProjectCard from "../components/Projects/ProjectCard";
 import CreateProjectModal from "../components/Projects/CreateProjectModal";
+import { useNavigate } from "react-router-dom";
+import {
+  ArrowLeftIcon
+} from "lucide-react";
 
 const Projects = () => {
   const dispatch = useDispatch();
   const { projects, loading, error } = useSelector((state) => state.project);
   const { token, admin } = useSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) {
@@ -27,9 +32,13 @@ const Projects = () => {
 
   return (
     <div className="h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 pt-8 flex justify-between items-center">
-        <h1 className="text-3xl font-bold">My Projects</h1>
+
+        <h1 className="text-3xl font-bold flex justify-center items-center gap-3"
+        >
+          My Projects</h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all"
