@@ -33,7 +33,6 @@ export const connectDb = async () => {
     cached.promise = mongoose
       .connect(process.env.MONGO_URI, {
         dbName: "Magadha",
-        bufferCommands: false,
       })
       .then((mongoose) => mongoose);
   }
