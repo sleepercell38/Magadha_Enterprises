@@ -10,21 +10,39 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "*", // ✅ allows your Vercel frontend
+// Configure CORS for production
+const corsOptions = {
+  origin: [
+    "http://localhost:5173", // Local development
+    "http://localhost:3000", // Local development alternate
+    process.env.FRONTEND_URL, // Production frontend URL
+    "https://*.vercel.app", // Allow all Vercel preview deployments
+  ].filter(Boolean),
   credentials: true,
-}));
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
+// Connect to database
 connectDb();
 
+// API Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/projects", projectEventRoutes);
 
+// Health check endpoint
 app.get("/", (req, res) => {
-  res.send("Welcome to the Admin Backend API");
+  res.json({ 
+    message: "Welcome to the Admin Backend API",
+    status: "running"
+  });
 });
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+export default app;

@@ -1,6 +1,8 @@
-# dependencies
 node_modules/
-
-# environment files
 .env
-
+.env.local
+.vercel
+*.log
+.DS_Store
+dist/
+build/
