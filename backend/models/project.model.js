@@ -35,6 +35,58 @@ const projectSchema = new mongoose.Schema(
       required: true,
       default: Date.now,
     },
+    status: {
+      type: String,
+      enum: ["active", "completed"],
+      default: "active",
+    },
+    billing: [{
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+      billingAmount: {
+        type: Number,
+        min: 0,
+      },
+      recipient: {
+        type: String,
+        trim: true,
+      },
+      additionalNotes: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+      },
+    }],
+    budget: {
+      areaInSqFeet: {
+        type: Number,
+        min: 0,
+      },
+      workDetails: {
+        totalAmount: {
+          type: Number,
+          min: 0,
+          default: 0,
+        },
+        items: [{
+          cumulativeWork: {
+            type: String,
+            trim: true,
+          },
+          cumulativePercentage: {
+            type: Number,
+            min: 0,
+            max: 100,
+          },
+          amount: {
+            type: Number,
+            min: 0,
+          },
+        }],
+      },
+    },
   },
   { timestamps: true }
 );

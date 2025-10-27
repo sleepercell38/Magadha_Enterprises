@@ -31,7 +31,7 @@ const Projects = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="h-full bg-gradient-to-b from-gray-900 to-gray-800 text-white">
 
       {/* Header */}
       <div className="max-w-7xl mx-auto px-6 pt-8 flex justify-between items-center">

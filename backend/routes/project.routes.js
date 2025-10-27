@@ -4,6 +4,16 @@ import {
   getProjectsByAdmin,
   getProjectById,
   deleteProject,
+  updateProject,
+  // Billing controllers
+  addBillingEntry,
+  getBillingEntries,
+  updateBillingEntry,
+  deleteBillingEntry,
+  getBillingSummary,
+  // Budget controllers
+  setBudget,
+  getBudget,
 } from "../controllers/project.controller.js";
 import { verifyAdmin } from "../middlewares/auth.middleware.js";
 
@@ -81,9 +91,26 @@ router.get("/event-metadata", verifyAdmin, (req, res) => {
   
   res.json(metadata);
 });
+
+// Base project routes
 router.post("/", verifyAdmin, createProject);
 router.get("/", verifyAdmin, getProjectsByAdmin);
+
+// Project-specific routes (must be after static routes but before :projectId)
 router.get("/:projectId", verifyAdmin, getProjectById);
+router.put("/:projectId", verifyAdmin, updateProject);
 router.delete("/:projectId", verifyAdmin, deleteProject);
+
+router.get("/:projectId/billing/summary", verifyAdmin, getBillingSummary);
+
+// Other billing routes
+router.post("/:projectId/billing", verifyAdmin, addBillingEntry);
+router.get("/:projectId/billing", verifyAdmin, getBillingEntries);
+router.put("/:projectId/billing/:billingId", verifyAdmin, updateBillingEntry);
+router.delete("/:projectId/billing/:billingId", verifyAdmin, deleteBillingEntry);
+// Other budget routes
+router.post("/:projectId/budget", verifyAdmin, setBudget);
+router.put("/:projectId/budget", verifyAdmin, setBudget); 
+router.get("/:projectId/budget", verifyAdmin, getBudget);
 
 export default router;
