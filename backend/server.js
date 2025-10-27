@@ -9,7 +9,11 @@ import projectEventRoutes from "./routes/projectEvent.routes.js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "*", // ✅ allows your Vercel frontend
+  credentials: true,
+}));
 app.use(express.json());
 
 connectDb();
