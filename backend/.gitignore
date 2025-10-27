@@ -1,2 +1,6 @@
-nodemodules
+# dependencies
+node_modules/
+
+# environment files
 .env
+
