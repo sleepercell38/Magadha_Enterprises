@@ -40,7 +40,9 @@ import {
   IndianRupeeIcon,
   TrendingUpIcon,
   TrendingDownIcon,
-  DollarSignIcon
+  DollarSignIcon,
+  MenuIcon,
+  XIcon
 } from "lucide-react";
 
 const EventTimeline = () => {
@@ -56,7 +58,9 @@ const EventTimeline = () => {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-  const [viewMode, setViewMode] = useState("timeline"); // Add view mode state
+  const [viewMode, setViewMode] = useState("timeline");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showMobileEventDetail, setShowMobileEventDetail] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -100,6 +104,7 @@ const EventTimeline = () => {
       dispatch(deleteEvent({ token, eventId }));
       if (selectedEvent?._id === eventId) {
         setSelectedEvent(null);
+        setShowMobileEventDetail(false);
       }
     }
   };
@@ -120,6 +125,14 @@ const EventTimeline = () => {
       });
   };
 
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    // On mobile, show the detail view
+    if (window.innerWidth < 1024) {
+      setShowMobileEventDetail(true);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "completed": return "bg-green-500";
@@ -130,19 +143,19 @@ const EventTimeline = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "completed": return <CheckCircleIcon className="w-5 h-5" />;
-      case "in-progress": return <ClockIcon className="w-5 h-5 animate-pulse" />;
-      default: return <AlertCircleIcon className="w-5 h-5" />;
+      case "completed": return <CheckCircleIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "in-progress": return <ClockIcon className="w-3 h-3 sm:w-4 sm:h-4 animate-pulse" />;
+      default: return <AlertCircleIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
     }
   };
 
   const getEventIcon = (type) => {
     switch (type) {
-      case "siteVisiting": return <MapPinIcon className="w-5 h-5" />;
-      case "materialDelivery": return <TruckIcon className="w-5 h-5" />;
-      case "meetingScheduled": return <UserIcon className="w-5 h-5" />;
-      case "siteInspection": return <FileTextIcon className="w-5 h-5" />;
-      default: return <PackageIcon className="w-5 h-5" />;
+      case "siteVisiting": return <MapPinIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "materialDelivery": return <TruckIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "meetingScheduled": return <UserIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case "siteInspection": return <FileTextIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
+      default: return <PackageIcon className="w-3 h-3 sm:w-4 sm:h-4" />;
     }
   };
 
@@ -165,7 +178,6 @@ const EventTimeline = () => {
 
   // Billing View Component
   const BillingView = () => {
-    // Sample billing data - replace with actual data from your backend
     const [billingData] = useState({
       totalBilled: 450000,
       totalPaid: 325000,
@@ -199,26 +211,26 @@ const EventTimeline = () => {
     });
 
     return (
-      <div className="p-6">
-        {/* Billing Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <DollarSignIcon className="w-8 h-8 text-blue-400" />
+      <div className="p-4 sm:p-6 lg:p-8">
+        {/* Billing Summary Cards - Responsive Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <DollarSignIcon className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
               <span className="text-xs text-gray-400">Total Budget</span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xl sm:text-2xl font-bold text-white">
               ₹{(budget.data?.workDetails?.totalAmount || 0).toLocaleString('en-IN')}
             </p>
             <p className="text-xs text-gray-400 mt-2">Allocated amount</p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <TrendingUpIcon className="w-8 h-8 text-green-400" />
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <TrendingUpIcon className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
               <span className="text-xs text-gray-400">Total Billed</span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xl sm:text-2xl font-bold text-white">
               ₹{billingData.totalBilled.toLocaleString('en-IN')}
             </p>
             <p className="text-xs text-green-400 mt-2">
@@ -226,12 +238,12 @@ const EventTimeline = () => {
             </p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <CheckCircleIcon className="w-8 h-8 text-emerald-400" />
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <CheckCircleIcon className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400" />
               <span className="text-xs text-gray-400">Paid Amount</span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xl sm:text-2xl font-bold text-white">
               ₹{billingData.totalPaid.toLocaleString('en-IN')}
             </p>
             <p className="text-xs text-emerald-400 mt-2">
@@ -239,48 +251,48 @@ const EventTimeline = () => {
             </p>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <TrendingDownIcon className="w-8 h-8 text-orange-400" />
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <TrendingDownIcon className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
               <span className="text-xs text-gray-400">Pending</span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xl sm:text-2xl font-bold text-white">
               ₹{billingData.pendingAmount.toLocaleString('en-IN')}
             </p>
             <p className="text-xs text-orange-400 mt-2">To be collected</p>
           </div>
         </div>
 
-        {/* Invoices Section */}
+        {/* Invoices Section - Responsive */}
         <div className="bg-gray-800 rounded-xl border border-gray-700">
-          <div className="p-6 border-b border-gray-700">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <ReceiptIcon className="w-6 h-6 text-blue-400" />
+          <div className="p-4 sm:p-6 border-b border-gray-700">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
+                <ReceiptIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                 Invoices
               </h2>
-              <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2">
-                <PlusIcon className="w-5 h-5" />
+              <button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+                <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                 Create Invoice
               </button>
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="space-y-4">
               {billingData.invoices.map((invoice) => (
                 <div
                   key={invoice.id}
-                  className="bg-gray-900 rounded-lg p-5 border border-gray-700 hover:border-gray-600 transition-all"
+                  className="bg-gray-900 rounded-lg p-4 sm:p-5 border border-gray-700 hover:border-gray-600 transition-all"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex-1 w-full sm:w-auto">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
                         <h3 className="font-semibold text-white">
                           {invoice.invoiceNumber}
                         </h3>
                         <span className={`
-                          text-xs px-3 py-1 rounded-full font-medium
+                          text-xs px-2 sm:px-3 py-1 rounded-full font-medium
                           ${invoice.status === 'paid' 
                             ? 'bg-green-500/20 text-green-400' 
                             : 'bg-orange-500/20 text-orange-400'}
@@ -299,8 +311,8 @@ const EventTimeline = () => {
                         })}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-white">
+                    <div className="text-left sm:text-right w-full sm:w-auto">
+                      <p className="text-xl sm:text-2xl font-bold text-white">
                         ₹{invoice.amount.toLocaleString('en-IN')}
                       </p>
                       <button className="mt-2 text-sm text-blue-400 hover:text-blue-300 transition-all">
@@ -314,21 +326,21 @@ const EventTimeline = () => {
           </div>
         </div>
 
-        {/* Payment Methods */}
-        <div className="mt-8 bg-gray-800 rounded-xl border border-gray-700 p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <CreditCardIcon className="w-5 h-5 text-blue-400" />
+        {/* Payment Methods - Responsive */}
+        <div className="mt-6 sm:mt-8 bg-gray-800 rounded-xl border border-gray-700 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
+            <CreditCardIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
             Payment Methods
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+            <div className="bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-700">
               <p className="text-sm text-gray-400 mb-1">Bank Transfer</p>
-              <p className="font-medium">State Bank of India</p>
+              <p className="font-medium text-sm sm:text-base">State Bank of India</p>
               <p className="text-xs text-gray-500">Account: ****4567</p>
             </div>
-            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+            <div className="bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-700">
               <p className="text-sm text-gray-400 mb-1">UPI</p>
-              <p className="font-medium">business@paytm</p>
+              <p className="font-medium text-sm sm:text-base">business@paytm</p>
               <p className="text-xs text-gray-500">Verified</p>
             </div>
           </div>
@@ -339,103 +351,212 @@ const EventTimeline = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      {/* Header */}
-      <div className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      {/* Header - More Compact and Sleek */}
+      <div className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 min-w-0">
               <button
                 onClick={() => navigate("/profile")}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-all"
+                className="p-1 sm:p-1.5 lg:p-2 hover:bg-gray-700 rounded-md lg:rounded-lg transition-all"
               >
-                <ArrowLeftIcon className="w-5 h-5" />
+                <ArrowLeftIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
               </button>
-              <div>
-                <h1 className="text-2xl font-bold">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-sm sm:text-base lg:text-xl font-bold truncate">
                   {selectedProject?.projectName || "Project"}
                 </h1>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-400 text-[10px] sm:text-xs lg:text-sm truncate">
                   Client: {selectedProject?.clientName}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {/* View Toggle Buttons */}
-              <button
-                onClick={() => setViewMode("timeline")}
-                className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                  viewMode === "timeline"
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-gray-700 hover:bg-gray-600"
-                }`}
-              >
-                <CalendarIcon className="w-5 h-5" />
-                Timeline
-              </button>
 
-              <button
-                onClick={() => setViewMode("billing")}
-                className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                  viewMode === "billing"
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-gray-700 hover:bg-gray-600"
-                }`}
-              >
-                <IndianRupeeIcon className="w-5 h-5" />
-                Billings
-              </button>
+            {/* Desktop Menu - More Compact */}
+            <div className="hidden lg:flex items-center gap-2">
+              {/* View Toggle Buttons - Smaller */}
+              <div className="flex bg-gray-800 rounded-lg p-0.5">
+                <button
+                  onClick={() => setViewMode("timeline")}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
+                    viewMode === "timeline"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  <CalendarIcon className="w-4 h-4" />
+                  Timeline
+                </button>
+                <button
+                  onClick={() => setViewMode("billing")}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
+                    viewMode === "billing"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  <IndianRupeeIcon className="w-4 h-4" />
+                  Billings
+                </button>
+              </div>
 
               {viewMode === "timeline" && (
                 <>
-                  {/* Budget Button */}
                   <button
                     onClick={() => setIsBudgetModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+                    className="bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
                   >
-                    <WalletIcon className="w-5 h-5" />
-                    {budget.data ? "Update Budget" : "Add Budget"}
+                    <WalletIcon className="w-4 h-4" />
+                    {budget.data ? "Budget" : "Add Budget"}
                   </button>
 
-                  {/* Mark as Completed Button */}
                   {selectedProject?.status === "active" && (
                     <button
                       onClick={handleMarkProjectCompleted}
                       disabled={isUpdatingStatus}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+                      className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
                     >
                       {isUpdatingStatus ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                           <span>Updating...</span>
                         </>
                       ) : (
                         <>
-                          <CheckIcon className="w-5 h-5" />
-                          <span>Mark as Completed</span>
+                          <CheckIcon className="w-4 h-4" />
+                          <span>Complete</span>
                         </>
                       )}
                     </button>
                   )}
 
-                  {/* Show completion badge */}
                   {selectedProject?.status === "completed" && (
-                    <div className="bg-green-500/20 text-green-400 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
-                      <CheckCircleIcon className="w-5 h-5" />
+                    <div className="bg-green-500/20 text-green-400 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5">
+                      <CheckCircleIcon className="w-4 h-4" />
                       <span>Completed</span>
                     </div>
                   )}
 
                   <button
                     onClick={() => setIsModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5"
                   >
-                    <PlusIcon className="w-5 h-5" />
+                    <PlusIcon className="w-4 h-4" />
                     Add Event
                   </button>
                 </>
               )}
             </div>
+
+            {/* Mobile/Tablet Menu Button - Smaller */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-1 sm:p-1.5 hover:bg-gray-700 rounded-md transition-all"
+            >
+              {mobileMenuOpen ? (
+                <XIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              ) : (
+                <MenuIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              )}
+            </button>
           </div>
+
+          {/* Mobile/Tablet Menu - More Compact */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden mt-2 sm:mt-3 pb-2 flex flex-col gap-1.5 sm:gap-2">
+              {/* View Mode Toggle - Inline Style */}
+              <div className="flex bg-gray-800 rounded-lg p-0.5">
+                <button
+                  onClick={() => {
+                    setViewMode("timeline");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex-1 px-2.5 py-1.5 sm:py-2 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 text-[11px] sm:text-xs ${
+                    viewMode === "timeline"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-400"
+                  }`}
+                >
+                  <CalendarIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  Timeline
+                </button>
+
+                <button
+                  onClick={() => {
+                    setViewMode("billing");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex-1 px-2.5 py-1.5 sm:py-2 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 text-[11px] sm:text-xs ${
+                    viewMode === "billing"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-400"
+                  }`}
+                >
+                  <IndianRupeeIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  Billings
+                </button>
+              </div>
+
+              {/* Action Buttons for Timeline View - Smaller */}
+              {viewMode === "timeline" && (
+                <div className="flex flex-col gap-1.5 sm:gap-2 mt-1">
+                  <div className="flex gap-1.5 sm:gap-2">
+                    <button
+                      onClick={() => {
+                        setIsBudgetModalOpen(true);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex-1 bg-gray-700 hover:bg-gray-600 px-2.5 py-1.5 sm:py-2 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 text-[11px] sm:text-xs"
+                    >
+                      <WalletIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      {budget.data ? "Budget" : "Add Budget"}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsModalOpen(true);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 px-2.5 py-1.5 sm:py-2 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 text-[11px] sm:text-xs"
+                    >
+                      <PlusIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      Add Event
+                    </button>
+                  </div>
+
+                  {selectedProject?.status === "active" && (
+                    <button
+                      onClick={() => {
+                        handleMarkProjectCompleted();
+                        setMobileMenuOpen(false);
+                      }}
+                      disabled={isUpdatingStatus}
+                      className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-800 px-2.5 py-1.5 sm:py-2 rounded-md font-medium transition-all flex items-center justify-center gap-1.5 text-[11px] sm:text-xs"
+                    >
+                      {isUpdatingStatus ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                          <span>Updating...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                          <span>Mark as Completed</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+
+                  {selectedProject?.status === "completed" && (
+                    <div className="w-full bg-green-500/20 text-green-400 px-2.5 py-1.5 sm:py-2 rounded-md font-medium flex items-center justify-center gap-1.5 text-[11px] sm:text-xs">
+                      <CheckCircleIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      <span>Completed</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -444,54 +565,36 @@ const EventTimeline = () => {
         <BillingView />
       ) : (
         <>
-          {/* Budget Summary Bar */}
+          {/* Budget Summary Bar - More Compact */}
           {(budget.data || selectedProject?.budget) && (
             <div className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-b border-green-700/30">
-              <div className="max-w-7xl mx-auto px-6 py-3">
+              <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 lg:py-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-6 text-[10px] sm:text-xs lg:text-sm">
                     {/* Total Budget */}
-                    <div className="flex items-center gap-2">
-                      <WalletIcon className="w-5 h-5 text-green-400" />
-                      <span className="text-sm text-gray-300">Total Budget:</span>
-                      <span className="text-lg font-bold text-green-400">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                      <WalletIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 text-green-400" />
+                      <span className="text-gray-300">Budget:</span>
+                      <span className="font-bold text-green-400">
                         ₹{(budget.data?.workDetails?.totalAmount || selectedProject?.budget?.workDetails?.totalAmount || 0).toLocaleString('en-IN')}
                       </span>
                     </div>
 
-                    {/* Work Items Count */}
+                    {/* Work Items Count - Hidden on mobile */}
                     {(budget.data?.workDetails?.items?.length > 0 || selectedProject?.budget?.workDetails?.items?.length > 0) && (
-                      <div className="flex items-center gap-2">
-                        <BriefcaseIcon className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-400">
-                          {budget.data?.workDetails?.items?.length || selectedProject?.budget?.workDetails?.items?.length} Work Items
+                      <div className="hidden sm:flex items-center gap-1.5">
+                        <BriefcaseIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-gray-400" />
+                        <span className="text-gray-400">
+                          {budget.data?.workDetails?.items?.length || selectedProject?.budget?.workDetails?.items?.length} Items
                         </span>
                       </div>
                     )}
 
-                    {/* Total Percentage */}
-                    {(budget.data?.workDetails?.items || selectedProject?.budget?.workDetails?.items) && (
-                      <div className="flex items-center gap-2">
-                        <PercentIcon className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-400">
-                          {(() => {
-                            const items = budget.data?.workDetails?.items || selectedProject?.budget?.workDetails?.items || [];
-                            const totalPercentage = items.reduce((sum, item) => sum + (item.cumulativePercentage || 0), 0);
-                            return (
-                              <span className={totalPercentage > 100 ? 'text-red-400' : ''}>
-                                {totalPercentage.toFixed(1)}% Allocated
-                              </span>
-                            );
-                          })()}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Area */}
+                    {/* Area - Hidden on mobile */}
                     {(budget.data?.areaInSqFeet || selectedProject?.budget?.areaInSqFeet) && (
-                      <div className="flex items-center gap-2">
-                        <HomeIcon className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-400">
+                      <div className="hidden md:flex items-center gap-1.5">
+                        <HomeIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-gray-400" />
+                        <span className="text-gray-400">
                           {budget.data?.areaInSqFeet || selectedProject?.budget?.areaInSqFeet} sq.ft
                         </span>
                       </div>
@@ -500,54 +603,59 @@ const EventTimeline = () => {
 
                   <button
                     onClick={() => setIsBudgetModalOpen(true)}
-                    className="text-sm text-green-400 hover:text-green-300 transition-all flex items-center gap-1"
+                    className="text-[10px] sm:text-xs lg:text-sm text-green-400 hover:text-green-300 transition-all flex items-center gap-0.5 sm:gap-1"
                   >
-                    Edit Budget
-                    <ArrowRightIcon className="w-4 h-4" />
+                    Edit
+                    <ArrowRightIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Split Screen Layout */}
-          <div className="flex h-[calc(100vh-80px)]">
-            {/* Left Panel - Timeline */}
-            <div className="w-full lg:w-2/5 border-r border-gray-700 overflow-y-auto bg-gray-900/30">
-              <div className="p-6">
-                <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                  <CalendarIcon className="w-5 h-5 text-blue-400" />
+          {/* Split Screen Layout - Responsive */}
+          <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)]">
+            {/* Timeline Panel - Full width on mobile, left panel on desktop */}
+            <div className={`
+              w-full lg:w-2/5 
+              ${showMobileEventDetail ? 'hidden lg:block' : 'block'}
+              lg:border-r border-gray-700 
+              overflow-y-auto bg-gray-900/30
+            `}>
+              <div className="p-4 sm:p-6">
+                <h2 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+                  <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                   Project Timeline
                 </h2>
 
                 {loading ? (
                   <div className="flex justify-center py-10">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-b-2 border-blue-500"></div>
                   </div>
                 ) : events.length === 0 ? (
                   <div className="text-center py-10">
-                    <PackageIcon className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-                    <p className="text-gray-400">No events yet</p>
-                    <p className="text-sm text-gray-500 mt-2">Click "Add Event" to start tracking</p>
+                    <PackageIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-gray-600 mb-4" />
+                    <p className="text-gray-400 text-sm sm:text-base">No events yet</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-2">Click "Add Event" to start tracking</p>
                   </div>
                 ) : (
                   <div className="relative">
                     {/* Timeline Line */}
-                    <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-700"></div>
+                    <div className="absolute left-4 sm:left-5 top-0 bottom-0 w-0.5 bg-gray-700"></div>
 
                     {/* Timeline Events */}
-                    <div className="space-y-6">
+                    <div className="space-y-3 sm:space-y-4">
                       {events.map((event) => (
                         <div
                           key={event._id}
-                          onClick={() => setSelectedEvent(event)}
-                          className={`relative flex gap-4 cursor-pointer group transition-all ${
-                            selectedEvent?._id === event._id ? 'scale-[1.02]' : ''
+                          onClick={() => handleEventClick(event)}
+                          className={`relative flex gap-2.5 sm:gap-3 cursor-pointer group transition-all ${
+                            selectedEvent?._id === event._id ? 'scale-[1.01]' : ''
                           }`}
                         >
-                          {/* Timeline Dot */}
+                          {/* Timeline Dot - Smaller */}
                           <div className={`
-                            relative z-10 w-12 h-12 rounded-full flex items-center justify-center
+                            relative z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center
                             ${getStatusColor(event.status)} 
                             ${selectedEvent?._id === event._id ? 'ring-4 ring-blue-500/30' : ''}
                             transition-all group-hover:scale-110
@@ -555,23 +663,23 @@ const EventTimeline = () => {
                             {getStatusIcon(event.status)}
                           </div>
 
-                          {/* Event Card */}
+                          {/* Event Card - Smaller text and padding */}
                           <div className={`
-                            flex-1 bg-gray-800 rounded-xl p-4 
+                            flex-1 bg-gray-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 
                             ${selectedEvent?._id === event._id ? 'bg-gray-700 border-2 border-blue-500' : 'hover:bg-gray-750'}
                             transition-all
                           `}>
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex items-center gap-2">
+                            <div className="flex items-start justify-between mb-1.5">
+                              <div className="flex items-center gap-1.5">
                                 <div className="text-blue-400">
                                   {getEventIcon(event.type)}
                                 </div>
-                                <h3 className="font-semibold">
+                                <h3 className="font-semibold text-xs sm:text-sm">
                                   {event.typeLabel || event.type}
                                 </h3>
                               </div>
                               <span className={`
-                                text-xs px-2 py-1 rounded-full
+                                text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full
                                 ${event.status === 'completed' ? 'bg-green-500/20 text-green-400' : ''}
                                 ${event.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-400' : ''}
                                 ${event.status === 'pending' ? 'bg-gray-500/20 text-gray-400' : ''}
@@ -580,19 +688,19 @@ const EventTimeline = () => {
                               </span>
                             </div>
 
-                            <p className="text-sm text-gray-400 mb-2">
+                            <p className="text-[10px] sm:text-xs text-gray-400 mb-1.5">
                               {formatDate(event.eventDate)}
                             </p>
 
-                            {/* Preview of first few fields */}
-                            <div className="text-xs text-gray-500">
+                            {/* Preview of first few fields - Smaller text */}
+                            <div className="text-[10px] sm:text-xs text-gray-500">
                               {Object.entries(event.data).slice(0, 2).map(([key, value]) => (
-                                <p key={key} className="truncate">
+                                <p key={key} className="truncate leading-tight">
                                   {formatFieldName(key)}: {value}
                                 </p>
                               ))}
                               {Object.keys(event.data).length > 2 && (
-                                <p className="text-blue-400 mt-1">View more →</p>
+                                <p className="text-blue-400 mt-0.5 text-[10px] sm:text-xs">View more →</p>
                               )}
                             </div>
                           </div>
@@ -604,20 +712,47 @@ const EventTimeline = () => {
               </div>
             </div>
 
-            {/* Right Panel - Event Details */}
-            <EventDetailPanel
-              selectedEvent={selectedEvent}
-              onStatusUpdate={handleStatusUpdate}
-              onDelete={handleDeleteEvent}
-              getStatusColor={getStatusColor}
-              getStatusIcon={getStatusIcon}
-              getEventIcon={getEventIcon}
-            />
+            {/* Event Details Panel - Mobile View */}
+            {showMobileEventDetail && selectedEvent && (
+              <div className="lg:hidden fixed inset-0 bg-gray-900 z-50 overflow-y-auto">
+                <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-4 flex items-center gap-3">
+                  <button
+                    onClick={() => setShowMobileEventDetail(false)}
+                    className="p-2 hover:bg-gray-700 rounded-lg transition-all"
+                  >
+                    <ArrowLeftIcon className="w-5 h-5" />
+                  </button>
+                  <h2 className="text-lg font-semibold flex-1">Event Details</h2>
+                </div>
+                <EventDetailPanel
+                  selectedEvent={selectedEvent}
+                  onStatusUpdate={handleStatusUpdate}
+                  onDelete={handleDeleteEvent}
+                  getStatusColor={getStatusColor}
+                  getStatusIcon={getStatusIcon}
+                  getEventIcon={getEventIcon}
+                  isMobile={true}
+                />
+              </div>
+            )}
+
+            {/* Event Details Panel - Desktop View */}
+            <div className="hidden lg:block lg:flex-1">
+              <EventDetailPanel
+                selectedEvent={selectedEvent}
+                onStatusUpdate={handleStatusUpdate}
+                onDelete={handleDeleteEvent}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
+                getEventIcon={getEventIcon}
+                isMobile={false}
+              />
+            </div>
           </div>
         </>
       )}
 
-      {/* Create Event Modal */}
+      {/* Modals */}
       {isModalOpen && (
         <CreateEventModal
           metadata={metadata}
@@ -626,7 +761,6 @@ const EventTimeline = () => {
         />
       )}
 
-      {/* Budget Modal */}
       {isBudgetModalOpen && (
         <BudgetModal
           isOpen={isBudgetModalOpen}
