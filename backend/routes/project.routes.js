@@ -14,6 +14,9 @@ import {
   // Budget controllers
   setBudget,
   getBudget,
+  addBudgetItem,
+  updateBudgetItem,
+  deleteBudgetItem,
 } from "../controllers/project.controller.js";
 import { verifyAdmin } from "../middlewares/auth.middleware.js";
 
@@ -96,21 +99,26 @@ router.get("/event-metadata", verifyAdmin, (req, res) => {
 router.post("/", verifyAdmin, createProject);
 router.get("/", verifyAdmin, getProjectsByAdmin);
 
-// Project-specific routes (must be after static routes but before :projectId)
+// Project-specific routes
 router.get("/:projectId", verifyAdmin, getProjectById);
 router.put("/:projectId", verifyAdmin, updateProject);
 router.delete("/:projectId", verifyAdmin, deleteProject);
 
+// Billing routes
 router.get("/:projectId/billing/summary", verifyAdmin, getBillingSummary);
-
-// Other billing routes
-router.post("/:projectId/billing", verifyAdmin, addBillingEntry);
 router.get("/:projectId/billing", verifyAdmin, getBillingEntries);
+router.post("/:projectId/billing", verifyAdmin, addBillingEntry);
 router.put("/:projectId/billing/:billingId", verifyAdmin, updateBillingEntry);
 router.delete("/:projectId/billing/:billingId", verifyAdmin, deleteBillingEntry);
-// Other budget routes
+
+// Budget routes
 router.post("/:projectId/budget", verifyAdmin, setBudget);
 router.put("/:projectId/budget", verifyAdmin, setBudget); 
 router.get("/:projectId/budget", verifyAdmin, getBudget);
+
+// Budget item routes
+router.post("/:projectId/budget/items", verifyAdmin, addBudgetItem);
+router.put("/:projectId/budget/items/:itemId", verifyAdmin, updateBudgetItem);
+router.delete("/:projectId/budget/items/:itemId", verifyAdmin, deleteBudgetItem);
 
 export default router;

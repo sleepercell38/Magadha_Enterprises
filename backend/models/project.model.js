@@ -53,6 +53,12 @@ const projectSchema = new mongoose.Schema(
         type: String,
         trim: true,
       },
+      status: {
+        type: String,
+        enum: ['credited', 'debited', 'pending'],
+        default: 'pending',
+        required: true,
+      },
       additionalNotes: {
         type: String,
         trim: true,

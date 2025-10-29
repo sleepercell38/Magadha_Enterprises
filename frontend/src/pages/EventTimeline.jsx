@@ -17,6 +17,7 @@ import {
 import CreateEventModal from "../components/Events/CreateEventModal";
 import EventDetailPanel from "../components/Events/EventDetailPanel";
 import BudgetModal from "../components/Budget/BudgetModal";
+import BillingView from "../components/Billing/BillingView"; // Import the new component
 import {
   PlusIcon,
   ArrowLeftIcon,
@@ -30,17 +31,11 @@ import {
   UserIcon,
   FileTextIcon,
   CheckIcon,
-  PercentIcon,
   WalletIcon,
   ArrowRightIcon,
   BriefcaseIcon,
   HomeIcon,
-  ReceiptIcon,
-  CreditCardIcon,
   IndianRupeeIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
-  DollarSignIcon,
   MenuIcon,
   XIcon
 } from "lucide-react";
@@ -174,179 +169,6 @@ const EventTimeline = () => {
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, str => str.toUpperCase())
       .trim();
-  };
-
-  // Billing View Component
-  const BillingView = () => {
-    const [billingData] = useState({
-      totalBilled: 450000,
-      totalPaid: 325000,
-      pendingAmount: 125000,
-      invoices: [
-        {
-          id: 1,
-          invoiceNumber: "INV-001",
-          date: "2024-01-15",
-          amount: 150000,
-          status: "paid",
-          description: "First installment - Foundation work"
-        },
-        {
-          id: 2,
-          invoiceNumber: "INV-002",
-          date: "2024-02-01",
-          amount: 175000,
-          status: "paid",
-          description: "Second installment - Structure work"
-        },
-        {
-          id: 3,
-          invoiceNumber: "INV-003",
-          date: "2024-03-01",
-          amount: 125000,
-          status: "pending",
-          description: "Third installment - Finishing work"
-        }
-      ]
-    });
-
-    return (
-      <div className="p-4 sm:p-6 lg:p-8">
-        {/* Billing Summary Cards - Responsive Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <DollarSignIcon className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
-              <span className="text-xs text-gray-400">Total Budget</span>
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
-              ₹{(budget.data?.workDetails?.totalAmount || 0).toLocaleString('en-IN')}
-            </p>
-            <p className="text-xs text-gray-400 mt-2">Allocated amount</p>
-          </div>
-
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <TrendingUpIcon className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
-              <span className="text-xs text-gray-400">Total Billed</span>
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
-              ₹{billingData.totalBilled.toLocaleString('en-IN')}
-            </p>
-            <p className="text-xs text-green-400 mt-2">
-              {((billingData.totalBilled / (budget.data?.workDetails?.totalAmount || 1)) * 100).toFixed(1)}% of budget
-            </p>
-          </div>
-
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <CheckCircleIcon className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400" />
-              <span className="text-xs text-gray-400">Paid Amount</span>
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
-              ₹{billingData.totalPaid.toLocaleString('en-IN')}
-            </p>
-            <p className="text-xs text-emerald-400 mt-2">
-              {((billingData.totalPaid / billingData.totalBilled) * 100).toFixed(1)}% collected
-            </p>
-          </div>
-
-          <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <TrendingDownIcon className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
-              <span className="text-xs text-gray-400">Pending</span>
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
-              ₹{billingData.pendingAmount.toLocaleString('en-IN')}
-            </p>
-            <p className="text-xs text-orange-400 mt-2">To be collected</p>
-          </div>
-        </div>
-
-        {/* Invoices Section - Responsive */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700">
-          <div className="p-4 sm:p-6 border-b border-gray-700">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
-                <ReceiptIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
-                Invoices
-              </h2>
-              <button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
-                <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                Create Invoice
-              </button>
-            </div>
-          </div>
-
-          <div className="p-4 sm:p-6">
-            <div className="space-y-4">
-              {billingData.invoices.map((invoice) => (
-                <div
-                  key={invoice.id}
-                  className="bg-gray-900 rounded-lg p-4 sm:p-5 border border-gray-700 hover:border-gray-600 transition-all"
-                >
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex-1 w-full sm:w-auto">
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
-                        <h3 className="font-semibold text-white">
-                          {invoice.invoiceNumber}
-                        </h3>
-                        <span className={`
-                          text-xs px-2 sm:px-3 py-1 rounded-full font-medium
-                          ${invoice.status === 'paid' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-orange-500/20 text-orange-400'}
-                        `}>
-                          {invoice.status === 'paid' ? 'Paid' : 'Pending'}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-400 mb-2">
-                        {invoice.description}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(invoice.date).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    <div className="text-left sm:text-right w-full sm:w-auto">
-                      <p className="text-xl sm:text-2xl font-bold text-white">
-                        ₹{invoice.amount.toLocaleString('en-IN')}
-                      </p>
-                      <button className="mt-2 text-sm text-blue-400 hover:text-blue-300 transition-all">
-                        View Details →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Payment Methods - Responsive */}
-        <div className="mt-6 sm:mt-8 bg-gray-800 rounded-xl border border-gray-700 p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
-            <CreditCardIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-            Payment Methods
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-700">
-              <p className="text-sm text-gray-400 mb-1">Bank Transfer</p>
-              <p className="font-medium text-sm sm:text-base">State Bank of India</p>
-              <p className="text-xs text-gray-500">Account: ****4567</p>
-            </div>
-            <div className="bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-700">
-              <p className="text-sm text-gray-400 mb-1">UPI</p>
-              <p className="font-medium text-sm sm:text-base">business@paytm</p>
-              <p className="text-xs text-gray-500">Verified</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -562,7 +384,11 @@ const EventTimeline = () => {
 
       {/* Conditional Rendering based on viewMode */}
       {viewMode === "billing" ? (
-        <BillingView />
+        <BillingView 
+          projectId={projectId} 
+          token={token} 
+          budget={budget.data || selectedProject?.budget} 
+        />
       ) : (
         <>
           {/* Budget Summary Bar - More Compact */}

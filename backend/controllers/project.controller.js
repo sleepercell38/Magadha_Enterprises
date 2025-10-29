@@ -4,19 +4,19 @@ import {
   getProjectByIdService,
   deleteProjectService,
   updateProjectService, 
-    addBillingEntryService,
+  addBillingEntryService,
   getBillingEntriesService,
   updateBillingEntryService,
   deleteBillingEntryService,
   getBillingSummaryService,
-   setBudgetService,
+  setBudgetService,
   getBudgetService,
   addBudgetItemService,
   updateBudgetItemService,
-  deleteBudgetItemService,// import new service
+  deleteBudgetItemService,
 } from "../services/project.service.js";
 
-//  Create a new project
+// Create a new project
 export const createProject = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -38,7 +38,7 @@ export const getProjectsByAdmin = async (req, res) => {
   }
 };
 
-//  Get single project details
+// Get single project details
 export const getProjectById = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -62,7 +62,7 @@ export const deleteProject = async (req, res) => {
   }
 };
 
-//  Update a project (name, client info, or status)
+// Update a project (name, client info, or status)
 export const updateProject = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -80,6 +80,7 @@ export const updateProject = async (req, res) => {
   }
 };
 
+// Add billing entry
 export const addBillingEntry = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -154,7 +155,7 @@ export const deleteBillingEntry = async (req, res) => {
   }
 };
 
-// Get billing summary
+// Get billing summary with status breakdown
 export const getBillingSummary = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -168,6 +169,7 @@ export const getBillingSummary = async (req, res) => {
   }
 };
 
+// Set/Update budget
 export const setBudget = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -185,7 +187,7 @@ export const setBudget = async (req, res) => {
   }
 };
 
-// Add a single budget item
+// Add budget item
 export const addBudgetItem = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -203,7 +205,7 @@ export const addBudgetItem = async (req, res) => {
   }
 };
 
-// Update a budget item
+// Update budget item
 export const updateBudgetItem = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -226,7 +228,7 @@ export const updateBudgetItem = async (req, res) => {
   }
 };
 
-// Delete a budget item
+// Delete budget item
 export const deleteBudgetItem = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -243,7 +245,7 @@ export const deleteBudgetItem = async (req, res) => {
   }
 };
 
-// Get budget details
+// Get budget
 export const getBudget = async (req, res) => {
   try {
     const adminId = req.admin.id;
@@ -260,5 +262,3 @@ export const getBudget = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
-

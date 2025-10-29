@@ -14,9 +14,6 @@ import {
   getBudgetApi,
 } from "../../api/projectApi";
 
-// ============= PROJECT THUNKS =============
-
-// CREATE PROJECT
 export const createProject = createAsyncThunk(
   "project/createProject",
   async ({ token, projectData }, { rejectWithValue }) => {
@@ -31,7 +28,6 @@ export const createProject = createAsyncThunk(
   }
 );
 
-// FETCH ALL PROJECTS
 export const fetchProjects = createAsyncThunk(
   "project/fetchProjects",
   async (token, { rejectWithValue }) => {
@@ -46,7 +42,6 @@ export const fetchProjects = createAsyncThunk(
   }
 );
 
-// FETCH SINGLE PROJECT
 export const fetchProjectById = createAsyncThunk(
   "project/fetchProjectById",
   async ({ token, projectId }, { rejectWithValue }) => {
@@ -61,7 +56,6 @@ export const fetchProjectById = createAsyncThunk(
   }
 );
 
-// DELETE PROJECT
 export const deleteProject = createAsyncThunk(
   "project/deleteProject",
   async ({ token, projectId }, { rejectWithValue }) => {
@@ -76,7 +70,6 @@ export const deleteProject = createAsyncThunk(
   }
 );
 
-// UPDATE PROJECT
 export const updateProject = createAsyncThunk(
   "project/updateProject",
   async ({ token, projectId, updateData }, { rejectWithValue }) => {
@@ -91,9 +84,6 @@ export const updateProject = createAsyncThunk(
   }
 );
 
-// ============= BILLING THUNKS =============
-
-// ADD BILLING ENTRY
 export const addBillingEntry = createAsyncThunk(
   "project/addBillingEntry",
   async ({ token, projectId, billingData }, { rejectWithValue }) => {
@@ -108,7 +98,6 @@ export const addBillingEntry = createAsyncThunk(
   }
 );
 
-// GET BILLING ENTRIES
 export const fetchBillingEntries = createAsyncThunk(
   "project/fetchBillingEntries",
   async ({ token, projectId }, { rejectWithValue }) => {
@@ -123,7 +112,6 @@ export const fetchBillingEntries = createAsyncThunk(
   }
 );
 
-// UPDATE BILLING ENTRY
 export const updateBillingEntry = createAsyncThunk(
   "project/updateBillingEntry",
   async ({ token, projectId, billingId, updateData }, { rejectWithValue }) => {
@@ -143,7 +131,6 @@ export const updateBillingEntry = createAsyncThunk(
   }
 );
 
-// DELETE BILLING ENTRY
 export const deleteBillingEntry = createAsyncThunk(
   "project/deleteBillingEntry",
   async ({ token, projectId, billingId }, { rejectWithValue }) => {
@@ -158,7 +145,6 @@ export const deleteBillingEntry = createAsyncThunk(
   }
 );
 
-// GET BILLING SUMMARY
 export const fetchBillingSummary = createAsyncThunk(
   "project/fetchBillingSummary",
   async ({ token, projectId }, { rejectWithValue }) => {
@@ -173,9 +159,6 @@ export const fetchBillingSummary = createAsyncThunk(
   }
 );
 
-// ============= BUDGET THUNKS =============
-
-// SET/UPDATE BUDGET
 export const setBudget = createAsyncThunk(
   "project/setBudget",
   async ({ token, projectId, budgetData }, { rejectWithValue }) => {
@@ -190,7 +173,6 @@ export const setBudget = createAsyncThunk(
   }
 );
 
-// GET BUDGET
 export const fetchBudget = createAsyncThunk(
   "project/fetchBudget",
   async ({ token, projectId }, { rejectWithValue }) => {
@@ -205,7 +187,6 @@ export const fetchBudget = createAsyncThunk(
   }
 );
 
-// SLICE
 const projectSlice = createSlice({
   name: "project",
   initialState: {
@@ -255,7 +236,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH PROJECTS
       .addCase(fetchProjects.pending, (state) => {
         state.loading = true;
       })
@@ -268,7 +248,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH SINGLE PROJECT
       .addCase(fetchProjectById.pending, (state) => {
         state.loading = true;
       })
@@ -281,7 +260,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // UPDATE PROJECT
       .addCase(updateProject.pending, (state) => {
         state.loading = true;
       })
@@ -307,7 +285,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // DELETE PROJECT
       .addCase(deleteProject.pending, (state) => {
         state.loading = true;
       })
@@ -323,8 +300,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ============= BILLING CASES =============
-      // ADD BILLING ENTRY
       .addCase(addBillingEntry.pending, (state) => {
         state.billing.loading = true;
         state.error = null;
@@ -333,7 +308,6 @@ const projectSlice = createSlice({
         state.billing.loading = false;
         state.billing.entries.push(action.payload.billing);
         
-        // Update project's billing in the projects list
         const projectIndex = state.projects.findIndex(
           (p) => p._id === action.payload.projectId
         );
@@ -348,7 +322,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH BILLING ENTRIES
       .addCase(fetchBillingEntries.pending, (state) => {
         state.billing.loading = true;
       })
@@ -361,14 +334,12 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // UPDATE BILLING ENTRY
       .addCase(updateBillingEntry.pending, (state) => {
         state.billing.loading = true;
       })
       .addCase(updateBillingEntry.fulfilled, (state, action) => {
         state.billing.loading = false;
         
-        // Update in billing entries
         const billingIndex = state.billing.entries.findIndex(
           (b) => b._id === action.payload.billing._id
         );
@@ -383,7 +354,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // DELETE BILLING ENTRY
       .addCase(deleteBillingEntry.pending, (state) => {
         state.billing.loading = true;
       })
@@ -399,7 +369,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH BILLING SUMMARY
       .addCase(fetchBillingSummary.pending, (state) => {
         state.billing.loading = true;
       })
@@ -412,8 +381,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ============= BUDGET CASES =============
-      // SET BUDGET
       .addCase(setBudget.pending, (state) => {
         state.budget.loading = true;
         state.error = null;
@@ -422,7 +389,6 @@ const projectSlice = createSlice({
         state.budget.loading = false;
         state.budget.data = action.payload.budget;
         
-        // Update project's budget in the projects list
         const projectIndex = state.projects.findIndex(
           (p) => p._id === action.payload.projectId
         );
@@ -430,7 +396,6 @@ const projectSlice = createSlice({
           state.projects[projectIndex].budget = action.payload.budget;
         }
         
-        // Update selected project if it's the same
         if (
           state.selectedProject &&
           state.selectedProject._id === action.payload.projectId
@@ -445,7 +410,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH BUDGET
       .addCase(fetchBudget.pending, (state) => {
         state.budget.loading = true;
       })

@@ -1,6 +1,6 @@
 import Project from "../models/project.model.js";
 
-//  Create a new project
+// Create a new project
 export const createProjectService = async (adminId, projectData) => {
   const { clientName, projectName, clientEmail, clientPhone, startDate } = projectData;
 
@@ -11,7 +11,7 @@ export const createProjectService = async (adminId, projectData) => {
     clientEmail,
     clientPhone,
     startDate,
-    status: "active", // default status
+    status: "active",
   });
 
   return newProject;
@@ -34,9 +34,7 @@ export const deleteProjectService = async (adminId, projectId) => {
   return deleted;
 };
 
-//  Update a project (can update any field including status)
 export const updateProjectService = async (adminId, projectId, updateData) => {
-  // Optional: restrict status to only valid values
   if (updateData.status && !["active", "completed"].includes(updateData.status)) {
     throw new Error("Invalid status value");
   }
@@ -44,7 +42,7 @@ export const updateProjectService = async (adminId, projectId, updateData) => {
   const updatedProject = await Project.findOneAndUpdate(
     { _id: projectId, admin: adminId },
     updateData,
-    { new: true, runValidators: true } // return updated doc and validate schema
+    { new: true, runValidators: true }
   );
 
   if (!updatedProject) throw new Error("Project not found or access denied");
@@ -52,20 +50,29 @@ export const updateProjectService = async (adminId, projectId, updateData) => {
   return updatedProject;
 };
 
+// ============= BILLING SERVICES =============
+
+// Add billing entry with status support
 export const addBillingEntryService = async (adminId, projectId, billingData) => {
-  const { billingAmount, recipient, additionalNotes, date } = billingData;
+  const { billingAmount, recipient, additionalNotes, date, status } = billingData;
+
+  // Validate status if provided
+  if (status && !['credited', 'debited', 'pending'].includes(status)) {
+    throw new Error("Invalid status value. Must be 'credited', 'debited', or 'pending'");
+  }
+
+  const billingEntry = {
+    date: date || Date.now(),
+    billingAmount,
+    recipient,
+    status: status || 'pending',
+    additionalNotes,
+  };
 
   const project = await Project.findOneAndUpdate(
     { _id: projectId, admin: adminId },
     {
-      $push: {
-        billing: {
-          date: date || Date.now(),
-          billingAmount,
-          recipient,
-          additionalNotes,
-        },
-      },
+      $push: { billing: billingEntry },
     },
     { new: true, runValidators: true }
   );
@@ -85,22 +92,39 @@ export const getBillingEntriesService = async (adminId, projectId) => {
   return project;
 };
 
-// Update a specific billing entry
+// Update a specific billing entry with status support
 export const updateBillingEntryService = async (adminId, projectId, billingId, updateData) => {
+  // Validate status if provided
+  if (updateData.status && !['credited', 'debited', 'pending'].includes(updateData.status)) {
+    throw new Error("Invalid status value. Must be 'credited', 'debited', or 'pending'");
+  }
+
+  const updateFields = {};
+  
+  // Build update fields dynamically
+  if (updateData.billingAmount !== undefined) {
+    updateFields["billing.$.billingAmount"] = updateData.billingAmount;
+  }
+  if (updateData.recipient !== undefined) {
+    updateFields["billing.$.recipient"] = updateData.recipient;
+  }
+  if (updateData.additionalNotes !== undefined) {
+    updateFields["billing.$.additionalNotes"] = updateData.additionalNotes;
+  }
+  if (updateData.date !== undefined) {
+    updateFields["billing.$.date"] = updateData.date;
+  }
+  if (updateData.status !== undefined) {
+    updateFields["billing.$.status"] = updateData.status;
+  }
+
   const project = await Project.findOneAndUpdate(
     {
       _id: projectId,
       admin: adminId,
       "billing._id": billingId,
     },
-    {
-      $set: {
-        "billing.$.billingAmount": updateData.billingAmount,
-        "billing.$.recipient": updateData.recipient,
-        "billing.$.additionalNotes": updateData.additionalNotes,
-        "billing.$.date": updateData.date,
-      },
-    },
+    { $set: updateFields },
     { new: true, runValidators: true }
   );
 
@@ -122,7 +146,7 @@ export const deleteBillingEntryService = async (adminId, projectId, billingId) =
   return project;
 };
 
-// Get billing summary (total amount, count, etc.)
+// Get billing summary with status breakdown
 export const getBillingSummaryService = async (adminId, projectId) => {
   const project = await Project.findOne(
     { _id: projectId, admin: adminId },
@@ -130,6 +154,19 @@ export const getBillingSummaryService = async (adminId, projectId) => {
   );
 
   if (!project) throw new Error("Project not found or access denied");
+
+  // Calculate totals by status
+  const statusBreakdown = {
+    credited: { count: 0, amount: 0 },
+    debited: { count: 0, amount: 0 },
+    pending: { count: 0, amount: 0 },
+  };
+
+  project.billing.forEach(entry => {
+    const status = entry.status || 'pending';
+    statusBreakdown[status].count++;
+    statusBreakdown[status].amount += entry.billingAmount || 0;
+  });
 
   const totalBillingAmount = project.billing.reduce(
     (sum, entry) => sum + (entry.billingAmount || 0),
@@ -140,13 +177,13 @@ export const getBillingSummaryService = async (adminId, projectId) => {
     projectName: project.projectName,
     totalEntries: project.billing.length,
     totalBillingAmount,
+    statusBreakdown,
     billingHistory: project.billing.sort((a, b) => b.date - a.date),
   };
 };
 
 // ============= BUDGET SERVICES =============
 
-// Set or update project budget
 export const setBudgetService = async (adminId, projectId, budgetData) => {
   const { areaInSqFeet, workDetails } = budgetData;
 
@@ -175,7 +212,6 @@ export const setBudgetService = async (adminId, projectId, budgetData) => {
   return project;
 };
 
-// Add a single work item to budget
 export const addBudgetItemService = async (adminId, projectId, itemData) => {
   const project = await Project.findOneAndUpdate(
     { _id: projectId, admin: adminId },
@@ -190,9 +226,7 @@ export const addBudgetItemService = async (adminId, projectId, itemData) => {
   return project;
 };
 
-// Update a specific budget item
 export const updateBudgetItemService = async (adminId, projectId, itemId, updateData) => {
-  // First get the current item to calculate amount difference
   const project = await Project.findOne(
     { _id: projectId, admin: adminId }
   );
@@ -224,9 +258,7 @@ export const updateBudgetItemService = async (adminId, projectId, itemId, update
   return updatedProject;
 };
 
-// Delete a budget item
 export const deleteBudgetItemService = async (adminId, projectId, itemId) => {
-  // First get the item to subtract its amount from total
   const project = await Project.findOne(
     { _id: projectId, admin: adminId }
   );
@@ -248,7 +280,6 @@ export const deleteBudgetItemService = async (adminId, projectId, itemId) => {
   return updatedProject;
 };
 
-// Get budget details for a project
 export const getBudgetService = async (adminId, projectId) => {
   const project = await Project.findOne(
     { _id: projectId, admin: adminId },

@@ -2,8 +2,6 @@ import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/projects`;
 
-// ============= EXISTING PROJECT APIs =============
-// Create a project
 export const createProjectApi = async (token, projectData) => {
   const res = await axios.post(API_URL, projectData, {
     headers: {
@@ -13,7 +11,6 @@ export const createProjectApi = async (token, projectData) => {
   return res.data;
 };
 
-// Get all projects for the logged-in admin
 export const getProjectsApi = async (token) => {
   const res = await axios.get(API_URL, {
     headers: {
@@ -23,7 +20,6 @@ export const getProjectsApi = async (token) => {
   return res.data;
 };
 
-// Get single project details
 export const getProjectByIdApi = async (token, projectId) => {
   const res = await axios.get(`${API_URL}/${projectId}`, {
     headers: {
@@ -33,7 +29,6 @@ export const getProjectByIdApi = async (token, projectId) => {
   return res.data;
 };
 
-// Delete a project
 export const deleteProjectApi = async (token, projectId) => {
   const res = await axios.delete(`${API_URL}/${projectId}`, {
     headers: {
@@ -43,7 +38,6 @@ export const deleteProjectApi = async (token, projectId) => {
   return res.data;
 };
 
-// Update a project
 export const updateProjectApi = async (token, projectId, updateData) => {
   const response = await axios.put(`${API_URL}/${projectId}`, updateData, {
     headers: { Authorization: `Bearer ${token}` },
@@ -51,8 +45,6 @@ export const updateProjectApi = async (token, projectId, updateData) => {
   return response.data;
 };
 
-
-// Add billing entry
 export const addBillingEntryApi = async (token, projectId, billingData) => {
   const res = await axios.post(
     `${API_URL}/${projectId}/billing`,
@@ -66,7 +58,6 @@ export const addBillingEntryApi = async (token, projectId, billingData) => {
   return res.data;
 };
 
-// Get billing entries
 export const getBillingEntriesApi = async (token, projectId) => {
   const res = await axios.get(`${API_URL}/${projectId}/billing`, {
     headers: {
@@ -76,7 +67,6 @@ export const getBillingEntriesApi = async (token, projectId) => {
   return res.data;
 };
 
-// Update billing entry
 export const updateBillingEntryApi = async (
   token,
   projectId,
@@ -95,7 +85,6 @@ export const updateBillingEntryApi = async (
   return res.data;
 };
 
-// Delete billing entry
 export const deleteBillingEntryApi = async (token, projectId, billingId) => {
   const res = await axios.delete(
     `${API_URL}/${projectId}/billing/${billingId}`,
@@ -108,7 +97,6 @@ export const deleteBillingEntryApi = async (token, projectId, billingId) => {
   return res.data;
 };
 
-// Get billing summary
 export const getBillingSummaryApi = async (token, projectId) => {
   const res = await axios.get(`${API_URL}/${projectId}/billing/summary`, {
     headers: {
@@ -118,8 +106,6 @@ export const getBillingSummaryApi = async (token, projectId) => {
   return res.data;
 };
 
-
-// Set/Update budget
 export const setBudgetApi = async (token, projectId, budgetData) => {
   const res = await axios.post(`${API_URL}/${projectId}/budget`, budgetData, {
     headers: {
